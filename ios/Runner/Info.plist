@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to attach photos to job visits.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to attach photos to job visits.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Use Face ID to securely view job visit photos.</string>
 </dict>
 </plist>
