@@ -7,9 +7,9 @@ import 'package:material_ui/material_ui.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await inject();
-
   AppDatabase database = createAppDatabase();
+
+  await inject(database);
 
   runApp(FieldOperationsApp(database: database));
 }

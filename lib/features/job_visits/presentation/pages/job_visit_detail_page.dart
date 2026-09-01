@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:field_operations_app/core/di/injector.dart';
 import 'package:field_operations_app/core/utils/services/local_auth/local_auth_service.dart';
+import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -232,7 +233,7 @@ class JobVisitDetailData {
 
   final String id;
   final DateTime timestamp;
-  final String status;
+  final JobVisitStatus status;
   final double latitude;
   final double longitude;
   final String? photoPath;
@@ -352,7 +353,7 @@ class _InfoRow extends StatelessWidget {
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
 
-  final String status;
+  final JobVisitStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -365,12 +366,21 @@ class _StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        status,
+        _statusLabel(status),
         style: theme.textTheme.labelMedium?.copyWith(
           color: theme.colorScheme.onSecondaryContainer,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
+  }
+
+  String _statusLabel(JobVisitStatus status) {
+    return switch (status) {
+      JobVisitStatus.enRoute => 'En Route',
+      JobVisitStatus.onSite => 'On Site',
+      JobVisitStatus.completed => 'Completed',
+      JobVisitStatus.blocked => 'Blocked',
+    };
   }
 }

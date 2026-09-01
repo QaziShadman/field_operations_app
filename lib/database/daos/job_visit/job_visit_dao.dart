@@ -20,14 +20,18 @@ class JobVisitDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<void> insertVisit(JobVisitsCompanion visit) {
-    return into(jobVisits).insert(visit);
+    return transaction(() async {
+      await into(jobVisits).insert(visit);
+    });
   }
 
   Future<void> updateVisit(JobVisitsCompanion visit) {
     if (visit.id.present) {
-      return (update(
-        jobVisits,
-      )..where((table) => table.id.equals(visit.id.value))).write(visit);
+      return transaction(() async {
+        await (update(
+          jobVisits,
+        )..where((table) => table.id.equals(visit.id.value))).write(visit);
+      });
     }
 
     throw ArgumentError('Job visit ID is required for update.');

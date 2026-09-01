@@ -1,3 +1,4 @@
+import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_detail_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/widgets/job_visit_list_tile.dart';
@@ -17,21 +18,21 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
     _MockJobVisit(
       id: 'visit-1',
       timestamp: DateTime(2026, 8, 30, 10, 30),
-      status: 'Completed',
+      status: JobVisitStatus.completed,
       latitude: 23.8103,
       longitude: 90.4125,
     ),
     _MockJobVisit(
       id: 'visit-2',
       timestamp: DateTime(2026, 8, 30, 9, 15),
-      status: 'On Site',
+      status: JobVisitStatus.onSite,
       latitude: 23.8200,
       longitude: 90.4200,
     ),
     _MockJobVisit(
       id: 'visit-3',
       timestamp: DateTime(2026, 8, 29, 14, 0),
-      status: 'En Route',
+      status: JobVisitStatus.blocked,
       latitude: 23.8300,
       longitude: 90.4300,
     ),
@@ -50,7 +51,9 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
 
       case _VisitSort.status:
         visits.sort(
-          (a, b) => a.status.toLowerCase().compareTo(b.status.toLowerCase()),
+          (a, b) => a.status.name.toLowerCase().compareTo(
+            b.status.name.toLowerCase(),
+          ),
         );
         break;
     }
@@ -192,6 +195,7 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
     // Temporary UI-only behavior.
     // Replace this with the BLoC/repository
     // once the presentation layer is connected.
+
     setState(() {
       _visits.add(
         _MockJobVisit(
@@ -259,7 +263,7 @@ class _MockJobVisit {
   });
   final String id;
   final DateTime timestamp;
-  final String status;
+  final JobVisitStatus status;
   final double latitude;
   final double longitude;
   final String? photoPath;
