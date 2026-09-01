@@ -1,9 +1,12 @@
 import 'package:field_operations_app/core/app/app_theme.dart';
+import 'package:field_operations_app/database/app_database.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_list_page.dart';
 import 'package:material_ui/material_ui.dart';
 
 class FieldOperationsApp extends StatelessWidget {
-  const FieldOperationsApp({super.key});
+  const FieldOperationsApp({required this.database, super.key});
+
+  final AppDatabase database;
 
   @override
   Widget build(BuildContext context) {
