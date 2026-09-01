@@ -1,3 +1,5 @@
+import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_detail_page.dart';
+import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/widgets/job_visit_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -154,19 +156,53 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
                 ),
               ],
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _createVisit,
-        icon: const Icon(Icons.add),
-        label: const Text('New Visit'),
-      ),
+      floatingActionButton: visits.isEmpty
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _createVisit,
+              icon: const Icon(Icons.add),
+              label: const Text('New Visit'),
+            ),
     );
   }
 
   void _openVisit(_MockJobVisit visit) {
-    // Detail page will be implemented next.
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => JobVisitDetailPage(
+          visit: JobVisitDetailData(
+            id: visit.id,
+            timestamp: visit.timestamp,
+            status: visit.status,
+            latitude: visit.latitude,
+            longitude: visit.longitude,
+            photoPath: visit.photoPath,
+          ),
+        ),
+      ),
+    );
   }
-  void _createVisit() {
-    // Create page will be implemented next.
+
+  void _createVisit() async {
+    final result = await Navigator.of(context).push<JobVisitFormData>(
+      MaterialPageRoute(builder: (_) => const JobVisitFormPage()),
+    );
+    if (!mounted || result == null) return;
+    // TODO
+    // Temporary UI-only behavior.
+    // Replace this with the BLoC/repository
+    // once the presentation layer is connected.
+    setState(() {
+      _visits.add(
+        _MockJobVisit(
+          id: 'visit-${_visits.length + 1}',
+          timestamp: result.timestamp,
+          status: result.status,
+          latitude: result.latitude,
+          longitude: result.longitude,
+        ),
+      );
+    });
   }
 }
 
@@ -219,10 +255,12 @@ class _MockJobVisit {
     required this.status,
     required this.latitude,
     required this.longitude,
+    this.photoPath,
   });
   final String id;
   final DateTime timestamp;
   final String status;
   final double latitude;
   final double longitude;
+  final String? photoPath;
 }
