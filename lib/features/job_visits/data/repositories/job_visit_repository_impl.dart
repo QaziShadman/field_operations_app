@@ -1,4 +1,3 @@
-import 'package:field_operations_app/database/daos/job_visit/job_visit_dao.dart';
 import 'package:field_operations_app/features/job_visits/data/datasources/local/job_visit_local_data_source.dart';
 import 'package:field_operations_app/features/job_visits/data/models/job_visit_model.dart';
 import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
@@ -6,19 +5,14 @@ import 'package:field_operations_app/features/job_visits/domain/entities/job_vis
 import 'package:field_operations_app/features/job_visits/domain/repositories/job_visit_repository.dart';
 
 class JobVisitRepositoryImpl implements JobVisitRepository {
-  const JobVisitRepositoryImpl({
-    required this._dao,
-    required this._localDataSource,
-  });
+  const JobVisitRepositoryImpl({required this._localDataSource});
 
-  final JobVisitDao _dao;
   final JobVisitLocalDataSource _localDataSource;
 
   @override
   Future<entity.JobVisit> create(entity.JobVisit visit) async {
     final model = JobVisitModel.fromEntity(visit);
 
-    // await _dao.insertVisit(model.toCompanion());
     await _localDataSource.create(model);
 
     return visit;
@@ -26,9 +20,6 @@ class JobVisitRepositoryImpl implements JobVisitRepository {
 
   @override
   Future<entity.JobVisit> update(entity.JobVisit visit) async {
-    // final model = JobVisitModel.fromEntity(visit);
-
-    // await _dao.updateVisit(model.toCompanion());
     final existing = await _localDataSource.getById(visit.id);
     if (existing == null) {
       throw StateError(
@@ -47,17 +38,15 @@ class JobVisitRepositoryImpl implements JobVisitRepository {
 
   @override
   Future<entity.JobVisit?> getById(String id) async {
-    final data = await _dao.findById(id);
+    final data = await _localDataSource.getById(id);
 
-    return data == null ? null : JobVisitModel.fromDatabase(data).toEntity();
+    return data?.toEntity();
   }
 
   @override
   Stream<List<entity.JobVisit>> watchAll() {
-    return _dao.watchAll().map(
-      (items) => items
-          .map((item) => JobVisitModel.fromDatabase(item).toEntity())
-          .toList(),
+    return _localDataSource.watchAll().map(
+      (items) => items.map((item) => item.toEntity()).toList(),
     );
   }
 
