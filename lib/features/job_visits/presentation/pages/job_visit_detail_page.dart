@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:material_ui/material_ui.dart';
 
 class JobVisitDetailPage extends StatelessWidget {
@@ -18,7 +19,23 @@ class JobVisitDetailPage extends StatelessWidget {
           IconButton(
             tooltip: 'Edit visit',
             icon: const Icon(Icons.edit_outlined),
-            onPressed: () async {},
+            onPressed: () async {
+              final result = await Navigator.of(context).push<JobVisitFormData>(
+                MaterialPageRoute(
+                  builder: (_) => JobVisitFormPage(
+                    visit: JobVisitFormData(
+                      id: visit.id,
+                      timestamp: visit.timestamp,
+                      status: visit.status,
+                      latitude: visit.latitude,
+                      longitude: visit.longitude,
+                      photoPath: visit.photoPath,
+                    ),
+                  ),
+                ),
+              );
+              if (!context.mounted || result == null) return; // TODO // Temporary UI-only behavior. // // The real update will be handled by the BLoC.
+            },
           ),
         ],
       ),

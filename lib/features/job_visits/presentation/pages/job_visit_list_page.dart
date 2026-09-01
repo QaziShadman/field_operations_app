@@ -1,4 +1,5 @@
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_detail_page.dart';
+import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/widgets/job_visit_list_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -181,8 +182,26 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
     );
   }
 
-  void _createVisit() {
-    // Create page will be implemented next.
+  void _createVisit() async {
+    final result = await Navigator.of(context).push<JobVisitFormData>(
+      MaterialPageRoute(builder: (_) => const JobVisitFormPage()),
+    );
+    if (!mounted || result == null) return;
+    // TODO
+    // Temporary UI-only behavior.
+    // Replace this with the BLoC/repository
+    // once the presentation layer is connected.
+    setState(() {
+      _visits.add(
+        _MockJobVisit(
+          id: 'visit-${_visits.length + 1}',
+          timestamp: result.timestamp,
+          status: result.status,
+          latitude: result.latitude,
+          longitude: result.longitude,
+        ),
+      );
+    });
   }
 }
 
