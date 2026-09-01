@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 
 class JobVisitFormPage extends StatefulWidget {
@@ -24,6 +28,7 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
   late String? _selectedPhoto;
 
   final _statuses = const ['En Route', 'On Site', 'Completed', 'Blocked'];
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -176,39 +181,125 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
       child: InkWell(
         onTap: _pickPhoto,
         borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).colorScheme.outline),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            children: [
-              Icon(
-                Icons.add_a_photo_outlined,
-                size: 36,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 10),
-              Text('Add photo', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 4),
-              Text(
-                'Optional',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+        child: _selectedPhoto != null
+            ? Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.file(
+                      File(_selectedPhoto!),
+                      width: double.infinity,
+                      height: 400,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Card(
+                      child: IconButton(
+                        tooltip: 'Remove photo',
+                        onPressed: () {
+                          setState(() {
+                            _selectedPhoto = null;
+                          });
+                        },
+                        icon: Icon(Icons.delete),
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.add_a_photo_outlined,
+                      size: 36,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Add photo',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Optional',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
 
   Future<void> _pickPhoto() async {
-    //TODO
-    // Photo picker will be connected here.
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ListTile(title: Text('Attach photo')),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: const Text('Take photo'),
+                onTap: () {
+                  Navigator.of(context).pop(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Choose from gallery'),
+                onTap: () {
+                  Navigator.of(context).pop(ImageSource.gallery);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+    if (!mounted || source == null) return;
+
+    try {
+      final image = await _imagePicker.pickImage(
+        source: source,
+        imageQuality: 85,
+      );
+      if (!mounted || image == null) return;
+      setState(() {
+        _selectedPhoto = image.path;
+      });
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      final message = switch (error.code) {
+        'camera_access_denied' => 'Camera permission was denied. Please allow camera access to take a photo.',
+        'photo_access_denied' => 'Photo library permission was denied. Please allow photo access to choose a photo.',
+        _ => 'Unable to access photos. Please check your app permissions.',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          action: SnackBarAction(label: 'OK', onPressed: () {}),
+        ),
+      ); // TODO // Temporary. Update to handle permissions more gracefully
+    }
   }
 
   Widget _buildSaveButton() {
