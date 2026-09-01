@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
+    as entity;
 import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +12,7 @@ class JobVisitFormPage extends StatefulWidget {
 
   /// Null means create mode.
   /// Non-null means edit mode.
-  final JobVisitFormData? visit;
+  final entity.JobVisit? visit;
 
   bool get isEditing => visit != null;
 
@@ -123,8 +125,10 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
         ),
         items: _statuses
             .map(
-              (status) =>
-                  DropdownMenuItem(value: status, child: Text(status.name)),
+              (status) => DropdownMenuItem(
+                value: status,
+                child: Text(_statusLabel(status)),
+              ),
             )
             .toList(),
         onChanged: (value) {
@@ -136,6 +140,15 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
         },
       ),
     );
+  }
+
+  String _statusLabel(JobVisitStatus status) {
+    return switch (status) {
+      JobVisitStatus.enRoute => 'En Route',
+      JobVisitStatus.onSite => 'On Site',
+      JobVisitStatus.completed => 'Completed',
+      JobVisitStatus.blocked => 'Blocked',
+    };
   }
 
   Widget _buildLocationSection() {

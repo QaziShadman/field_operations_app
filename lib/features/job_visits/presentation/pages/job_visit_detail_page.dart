@@ -2,14 +2,18 @@ import 'dart:io';
 
 import 'package:field_operations_app/core/di/injector.dart';
 import 'package:field_operations_app/core/utils/services/local_auth/local_auth_service.dart';
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
+    as entity;
 import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
+import 'package:field_operations_app/features/job_visits/presentation/bloc/job_visit_bloc.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
 class JobVisitDetailPage extends StatefulWidget {
-  const JobVisitDetailPage({required this.visit, super.key});
+  const JobVisitDetailPage({required this.visitId, super.key});
 
-  final JobVisitDetailData visit;
+  final String visitId;
 
   @override
   State<JobVisitDetailPage> createState() => _JobVisitDetailPageState();
@@ -24,6 +28,36 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    return BlocBuilder<JobVisitBloc, JobVisitState>(
+      builder: (context, state) {
+        final visit = _findVisit(state);
+        if (visit == null) {
+          return const Scaffold(
+            body: Center(child: Text('Visit no longer exists.')),
+          );
+        }
+        return _buildPage(context, theme, visit);
+      },
+    );
+  }
+
+  entity.JobVisit? _findVisit(JobVisitState state) {
+    if (state is! JobVisitLoaded) {
+      return null;
+    }
+    for (final visit in state.visits) {
+      if (visit.id == widget.visitId) {
+        return visit;
+      }
+    }
+    return null;
+  }
+
+  Widget _buildPage(
+    BuildContext context,
+    ThemeData theme,
+    entity.JobVisit visit,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Job Visit'),
@@ -31,30 +65,14 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
           IconButton(
             tooltip: 'Edit visit',
             icon: const Icon(Icons.edit_outlined),
-            onPressed: () async {
-              final result = await Navigator.of(context).push<JobVisitFormData>(
-                MaterialPageRoute(
-                  builder: (_) => JobVisitFormPage(
-                    visit: JobVisitFormData(
-                      id: widget.visit.id,
-                      timestamp: widget.visit.timestamp,
-                      status: widget.visit.status,
-                      latitude: widget.visit.latitude,
-                      longitude: widget.visit.longitude,
-                      photoPath: widget.visit.photoPath,
-                    ),
-                  ),
-                ),
-              );
-              if (!context.mounted || result == null) return; // TODO // Temporary UI-only behavior. // // The real update will be handled by the BLoC.
-            },
+            onPressed: () => _editVisit(context, visit),
           ),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _HeaderCard(visit: widget.visit),
+          _HeaderCard(visit: visit),
           const SizedBox(height: 16),
           _SectionCard(
             title: 'Visit information',
@@ -62,19 +80,19 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
               _InfoRow(
                 icon: Icons.calendar_today_outlined,
                 label: 'Date',
-                value: _formatDate(widget.visit.timestamp),
+                value: _formatDate(visit.timestamp),
               ),
               _InfoRow(
                 icon: Icons.access_time_outlined,
                 label: 'Time',
-                value: _formatTime(widget.visit.timestamp),
+                value: _formatTime(visit.timestamp),
               ),
               _InfoRow(
                 icon: Icons.location_on_outlined,
                 label: 'Location',
                 value:
-                    '${widget.visit.latitude.toStringAsFixed(6)}, '
-                    '${widget.visit.longitude.toStringAsFixed(6)}',
+                    '${visit.latitude.toStringAsFixed(6)}, '
+                    '${visit.longitude.toStringAsFixed(6)}',
               ),
             ],
           ),
@@ -82,7 +100,7 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
           _SectionCard(
             title: 'Photo',
             children: [
-              if (widget.visit.photoPath == null)
+              if (visit.photoPath == null)
                 Row(
                   children: [
                     Icon(
@@ -107,7 +125,7 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
                       aspectRatio: 4 / 3,
                       child: _photoUnlocked
                           ? Image.file(
-                              File(widget.visit.photoPath!),
+                              File(visit.photoPath!),
                               fit: BoxFit.cover,
                             )
                           : Container(
@@ -152,6 +170,25 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _editVisit(BuildContext context, entity.JobVisit visit) async {
+    final result = await Navigator.of(context).push<JobVisitFormData>(
+      MaterialPageRoute(builder: (_) => JobVisitFormPage(visit: visit)),
+    );
+
+    if (!context.mounted || result == null) return;
+
+    final updatedVisit = entity.JobVisit(
+      id: visit.id,
+      timestamp: result.timestamp,
+      latitude: result.latitude,
+      longitude: result.longitude,
+      status: result.status,
+      photoPath: result.photoPath,
+    );
+
+    context.read<JobVisitBloc>().add(JobVisitUpdated(updatedVisit));
   }
 
   Future<void> _unlockPhoto() async {
@@ -242,7 +279,7 @@ class JobVisitDetailData {
 class _HeaderCard extends StatelessWidget {
   const _HeaderCard({required this.visit});
 
-  final JobVisitDetailData visit;
+  final entity.JobVisit visit;
 
   @override
   Widget build(BuildContext context) {

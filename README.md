@@ -38,6 +38,10 @@ BLoC was selected because the application contains several asynchronous workflow
 
 BLoC provides explicit event/state transitions and keeps UI state separate from business logic. Feature-level BLoCs also allow the application to scale without introducing a single global state object.
 
+## Dependency Injection
+
+GetIt is used for dependency injection which allows for easier decoupling of code and making clean architecture easier.
+
 ## Local Persistence
 
 Drift is used for local persistence because the application requires reliable structured relational data, transactional updates, queries, and durable offline storage.

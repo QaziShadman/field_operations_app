@@ -1,7 +1,11 @@
-import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
+import 'package:field_operations_app/core/di/injector.dart';
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
+    as entity;
+import 'package:field_operations_app/features/job_visits/presentation/bloc/job_visit_bloc.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_detail_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/widgets/job_visit_list_tile.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
 class JobVisitListPage extends StatefulWidget {
@@ -14,199 +18,223 @@ class JobVisitListPage extends StatefulWidget {
 class _JobVisitListPageState extends State<JobVisitListPage> {
   _VisitSort _sort = _VisitSort.newest;
 
-  final List<_MockJobVisit> _visits = [
-    _MockJobVisit(
-      id: 'visit-1',
-      timestamp: DateTime(2026, 8, 30, 10, 30),
-      status: JobVisitStatus.completed,
-      latitude: 23.8103,
-      longitude: 90.4125,
-    ),
-    _MockJobVisit(
-      id: 'visit-2',
-      timestamp: DateTime(2026, 8, 30, 9, 15),
-      status: JobVisitStatus.onSite,
-      latitude: 23.8200,
-      longitude: 90.4200,
-    ),
-    _MockJobVisit(
-      id: 'visit-3',
-      timestamp: DateTime(2026, 8, 29, 14, 0),
-      status: JobVisitStatus.blocked,
-      latitude: 23.8300,
-      longitude: 90.4300,
-    ),
-  ];
+  List<entity.JobVisit> _sortVisits(List<entity.JobVisit> visits) {
+    final sortedVisits = [...visits];
 
-  List<_MockJobVisit> get _sortedVisits {
-    final visits = [..._visits];
     switch (_sort) {
       case _VisitSort.newest:
-        visits.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        sortedVisits.sort((a, b) => b.timestamp.compareTo(a.timestamp));
         break;
 
       case _VisitSort.oldest:
-        visits.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        sortedVisits.sort((a, b) => a.timestamp.compareTo(b.timestamp));
         break;
 
       case _VisitSort.status:
-        visits.sort(
-          (a, b) => a.status.name.toLowerCase().compareTo(
-            b.status.name.toLowerCase(),
-          ),
-        );
+        sortedVisits.sort((a, b) => a.status.name.compareTo(b.status.name));
         break;
     }
-    return visits;
+
+    return sortedVisits;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final visits = _sortedVisits;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Job Visits'),
-        actions: [
-          PopupMenuButton<_VisitSort>(
-            tooltip: 'Sort visits',
-            icon: const Icon(Icons.sort),
-            initialValue: _sort,
-            onSelected: (value) {
-              setState(() {
-                _sort = value;
-              });
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(
-                value: _VisitSort.newest,
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_downward),
-                    SizedBox(width: 12),
-                    Text('Newest first'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: _VisitSort.oldest,
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_upward),
-                    SizedBox(width: 12),
-                    Text('Oldest first'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: _VisitSort.status,
-                child: Row(
-                  children: [
-                    Icon(Icons.sort_by_alpha),
-                    SizedBox(width: 12),
-                    Text('Status'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: visits.isEmpty
-          ? _EmptyState(onCreateVisit: _createVisit)
-          : CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<JobVisitBloc, JobVisitState>(
+      builder: (context, state) {
+        final showFab = state is JobVisitLoaded && state.visits.isNotEmpty;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Job Visits'),
+            actions: [
+              PopupMenuButton<_VisitSort>(
+                tooltip: 'Sort visits',
+                icon: const Icon(Icons.sort),
+                initialValue: _sort,
+                onSelected: (value) {
+                  setState(() {
+                    _sort = value;
+                  });
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(
+                    value: _VisitSort.newest,
+                    child: Row(
                       children: [
-                        Text(
-                          'Your visits',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${visits.length} visits',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
+                        Icon(Icons.arrow_downward),
+                        SizedBox(width: 12),
+                        Text('Newest first'),
                       ],
                     ),
                   ),
+                  PopupMenuItem(
+                    value: _VisitSort.oldest,
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_upward),
+                        SizedBox(width: 12),
+                        Text('Oldest first'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: _VisitSort.status,
+                    child: Row(
+                      children: [
+                        Icon(Icons.sort_by_alpha),
+                        SizedBox(width: 12),
+                        Text('Status'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          body: switch (state) {
+            JobVisitInitial() || JobVisitLoading() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            JobVisitLoaded(:final visits) => _buildLoaded(
+              context,
+              theme,
+              visits,
+            ),
+            JobVisitFailure(:final message) => _buildError(context, message),
+          },
+          floatingActionButton: showFab
+              ? FloatingActionButton.extended(
+                  onPressed: _createVisit,
+                  icon: const Icon(Icons.add),
+                  label: const Text('New Visit'),
+                )
+              : null,
+        );
+      },
+    );
+  }
+
+  Widget _buildLoaded(
+    BuildContext context,
+    ThemeData theme,
+    List<entity.JobVisit> visits,
+  ) {
+    final sortedVisits = _sortVisits(visits);
+
+    if (sortedVisits.isEmpty) {
+      return _EmptyState(onCreateVisit: _createVisit);
+    }
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your visits',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                  sliver: SliverList.separated(
-                    itemCount: visits.length,
-                    itemBuilder: (context, index) {
-                      final visit = visits[index];
-                      return JobVisitListTile(
-                        timestamp: visit.timestamp,
-                        status: visit.status,
-                        latitude: visit.latitude,
-                        longitude: visit.longitude,
-                        onTap: () => _openVisit(visit),
-                      );
-                    },
-                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                const SizedBox(height: 4),
+                Text(
+                  '${visits.length} visits',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-      floatingActionButton: visits.isEmpty
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: _createVisit,
-              icon: const Icon(Icons.add),
-              label: const Text('New Visit'),
-            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+          sliver: SliverList.separated(
+            itemCount: sortedVisits.length,
+            itemBuilder: (context, index) {
+              final visit = sortedVisits[index];
+              return JobVisitListTile(
+                timestamp: visit.timestamp,
+                status: visit.status,
+                latitude: visit.latitude,
+                longitude: visit.longitude,
+                onTap: () => _openVisit(visit),
+              );
+            },
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+          ),
+        ),
+      ],
     );
   }
 
-  void _openVisit(_MockJobVisit visit) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => JobVisitDetailPage(
-          visit: JobVisitDetailData(
-            id: visit.id,
-            timestamp: visit.timestamp,
-            status: visit.status,
-            latitude: visit.latitude,
-            longitude: visit.longitude,
-            photoPath: visit.photoPath,
-          ),
+  Widget _buildError(BuildContext context, String message) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+            const SizedBox(height: 16),
+            Text(
+              'Something went wrong',
+              style: theme.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () {
+                context.read<JobVisitBloc>().add(const JobVisitStarted());
+              },
+              child: const Text('Try again'),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void _createVisit() async {
+  void _openVisit(entity.JobVisit visit) {
+    final bloc = getIt<JobVisitBloc>();
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: bloc,
+          child: JobVisitDetailPage(visitId: visit.id),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _createVisit() async {
     final result = await Navigator.of(context).push<JobVisitFormData>(
       MaterialPageRoute(builder: (_) => const JobVisitFormPage()),
     );
     if (!mounted || result == null) return;
-    // TODO
-    // Temporary UI-only behavior.
-    // Replace this with the BLoC/repository
-    // once the presentation layer is connected.
+    final visit = entity.JobVisit(
+      id: _generateVisitId(),
+      timestamp: result.timestamp,
+      latitude: result.latitude,
+      longitude: result.longitude,
+      status: result.status,
+      photoPath: result.photoPath,
+    );
+    context.read<JobVisitBloc>().add(JobVisitCreated(visit));
+  }
 
-    setState(() {
-      _visits.add(
-        _MockJobVisit(
-          id: 'visit-${_visits.length + 1}',
-          timestamp: result.timestamp,
-          status: result.status,
-          latitude: result.latitude,
-          longitude: result.longitude,
-        ),
-      );
-    });
+  String _generateVisitId() {
+    return DateTime.now().microsecondsSinceEpoch.toString();
   }
 }
 
@@ -251,20 +279,3 @@ class _EmptyState extends StatelessWidget {
 }
 
 enum _VisitSort { newest, oldest, status }
-
-class _MockJobVisit {
-  _MockJobVisit({
-    required this.id,
-    required this.timestamp,
-    required this.status,
-    required this.latitude,
-    required this.longitude,
-    this.photoPath,
-  });
-  final String id;
-  final DateTime timestamp;
-  final JobVisitStatus status;
-  final double latitude;
-  final double longitude;
-  final String? photoPath;
-}
