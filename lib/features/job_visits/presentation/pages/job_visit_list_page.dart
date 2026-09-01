@@ -176,6 +176,7 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
             status: visit.status,
             latitude: visit.latitude,
             longitude: visit.longitude,
+            photoPath: visit.photoPath,
           ),
         ),
       ),
@@ -254,10 +255,12 @@ class _MockJobVisit {
     required this.status,
     required this.latitude,
     required this.longitude,
+    this.photoPath,
   });
   final String id;
   final DateTime timestamp;
   final String status;
   final double latitude;
   final double longitude;
+  final String? photoPath;
 }

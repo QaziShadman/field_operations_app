@@ -1,12 +1,23 @@
 import 'dart:io';
 
+import 'package:field_operations_app/core/di/injector.dart';
+import 'package:field_operations_app/core/utils/services/local_auth/local_auth_service.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
 import 'package:material_ui/material_ui.dart';
 
-class JobVisitDetailPage extends StatelessWidget {
+class JobVisitDetailPage extends StatefulWidget {
   const JobVisitDetailPage({required this.visit, super.key});
 
   final JobVisitDetailData visit;
+
+  @override
+  State<JobVisitDetailPage> createState() => _JobVisitDetailPageState();
+}
+
+class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
+  final _localAuthServices = getIt<LocalAuthServices>();
+  bool _photoUnlocked = false;
+  bool _isAuthenticatingPhoto = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +35,12 @@ class JobVisitDetailPage extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (_) => JobVisitFormPage(
                     visit: JobVisitFormData(
-                      id: visit.id,
-                      timestamp: visit.timestamp,
-                      status: visit.status,
-                      latitude: visit.latitude,
-                      longitude: visit.longitude,
-                      photoPath: visit.photoPath,
+                      id: widget.visit.id,
+                      timestamp: widget.visit.timestamp,
+                      status: widget.visit.status,
+                      latitude: widget.visit.latitude,
+                      longitude: widget.visit.longitude,
+                      photoPath: widget.visit.photoPath,
                     ),
                   ),
                 ),
@@ -42,7 +53,7 @@ class JobVisitDetailPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _HeaderCard(visit: visit),
+          _HeaderCard(visit: widget.visit),
           const SizedBox(height: 16),
           _SectionCard(
             title: 'Visit information',
@@ -50,19 +61,19 @@ class JobVisitDetailPage extends StatelessWidget {
               _InfoRow(
                 icon: Icons.calendar_today_outlined,
                 label: 'Date',
-                value: _formatDate(visit.timestamp),
+                value: _formatDate(widget.visit.timestamp),
               ),
               _InfoRow(
                 icon: Icons.access_time_outlined,
                 label: 'Time',
-                value: _formatTime(visit.timestamp),
+                value: _formatTime(widget.visit.timestamp),
               ),
               _InfoRow(
                 icon: Icons.location_on_outlined,
                 label: 'Location',
                 value:
-                    '${visit.latitude.toStringAsFixed(6)}, '
-                    '${visit.longitude.toStringAsFixed(6)}',
+                    '${widget.visit.latitude.toStringAsFixed(6)}, '
+                    '${widget.visit.longitude.toStringAsFixed(6)}',
               ),
             ],
           ),
@@ -70,12 +81,7 @@ class JobVisitDetailPage extends StatelessWidget {
           _SectionCard(
             title: 'Photo',
             children: [
-              if (visit.photoPath != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.file(File(visit.photoPath!), fit: BoxFit.cover),
-                )
-              else
+              if (widget.visit.photoPath == null)
                 Row(
                   children: [
                     Icon(
@@ -90,6 +96,54 @@ class JobVisitDetailPage extends StatelessWidget {
                       ),
                     ),
                   ],
+                )
+              else
+                GestureDetector(
+                  onTap: _photoUnlocked ? null : _unlockPhoto,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: AspectRatio(
+                      aspectRatio: 4 / 3,
+                      child: _photoUnlocked
+                          ? Image.file(
+                              File(widget.visit.photoPath!),
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.lock_outline,
+                                      size: 40,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'Photo locked',
+                                      style: theme.textTheme.titleMedium,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _isAuthenticatingPhoto
+                                          ? 'Waiting for authentication...'
+                                          : 'Tap to authenticate and view',
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: theme
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -97,6 +151,36 @@ class JobVisitDetailPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _unlockPhoto() async {
+    if (_isAuthenticatingPhoto || _photoUnlocked) {
+      return;
+    }
+
+    setState(() {
+      _isAuthenticatingPhoto = true;
+    });
+
+    final authenticated = await _localAuthServices.authenticateForPhoto();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isAuthenticatingPhoto = false;
+
+      if (authenticated) {
+        _photoUnlocked = true;
+      }
+    });
+
+    if (!authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Authentication failed. The photo remains locked.'),
+        ),
+      );
+    }
   }
 
   String _formatDate(DateTime value) {
