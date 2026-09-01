@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,10 +25,10 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
   late final TextEditingController _longitudeController;
 
   late DateTime _selectedDateTime;
-  late String _selectedStatus;
+  late JobVisitStatus _selectedStatus;
   late String? _selectedPhoto;
 
-  final _statuses = const ['En Route', 'On Site', 'Completed', 'Blocked'];
+  final _statuses = JobVisitStatus.values;
   final ImagePicker _imagePicker = ImagePicker();
 
   @override
@@ -38,7 +39,7 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
 
     _selectedDateTime = visit?.timestamp ?? DateTime.now();
 
-    _selectedStatus = visit?.status ?? 'En Route';
+    _selectedStatus = visit?.status ?? JobVisitStatus.enRoute;
 
     _selectedPhoto = visit?.photoPath;
 
@@ -113,7 +114,7 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
   Widget _buildStatusSection() {
     return _FormSection(
       title: 'Status',
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField<JobVisitStatus>(
         initialValue: _selectedStatus,
         decoration: const InputDecoration(
           labelText: 'Visit status',
@@ -122,7 +123,8 @@ class _JobVisitFormPageState extends State<JobVisitFormPage> {
         ),
         items: _statuses
             .map(
-              (status) => DropdownMenuItem(value: status, child: Text(status)),
+              (status) =>
+                  DropdownMenuItem(value: status, child: Text(status.name)),
             )
             .toList(),
         onChanged: (value) {
@@ -429,7 +431,7 @@ class JobVisitFormData {
 
   final String id;
   final DateTime timestamp;
-  final String status;
+  final JobVisitStatus status;
   final double latitude;
   final double longitude;
   final String? photoPath;

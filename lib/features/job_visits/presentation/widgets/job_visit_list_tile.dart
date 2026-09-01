@@ -1,3 +1,4 @@
+import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
 import 'package:material_ui/material_ui.dart';
 
 class JobVisitListTile extends StatelessWidget {
@@ -10,7 +11,7 @@ class JobVisitListTile extends StatelessWidget {
     super.key,
   });
   final DateTime timestamp;
-  final String status;
+  final JobVisitStatus status;
   final double latitude;
   final double longitude;
   final VoidCallback? onTap;
@@ -114,7 +115,7 @@ class JobVisitListTile extends StatelessWidget {
 
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
-  final String status;
+  final JobVisitStatus status;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -125,12 +126,21 @@ class _StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        status,
+        _statusLabel(status),
         style: theme.textTheme.labelMedium?.copyWith(
           color: theme.colorScheme.onSecondaryContainer,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
+  }
+
+  String _statusLabel(JobVisitStatus status) {
+    return switch (status) {
+      JobVisitStatus.enRoute => 'En Route',
+      JobVisitStatus.onSite => 'On Site',
+      JobVisitStatus.completed => 'Completed',
+      JobVisitStatus.blocked => 'Blocked',
+    };
   }
 }
