@@ -1,3 +1,4 @@
+import 'package:field_operations_app/core/utils/services/connectivity/connectivity_service.dart';
 import 'package:field_operations_app/core/utils/services/local_auth/local_auth_service.dart';
 import 'package:field_operations_app/database/app_database.dart';
 import 'package:field_operations_app/database/daos/job_visit/job_visit_dao.dart';
@@ -13,6 +14,7 @@ final getIt = GetIt.instance;
 
 Future<void> inject(AppDatabase database) async {
   getIt.registerLazySingleton(() => LocalAuthServices());
+  getIt.registerLazySingleton(() => ConnectivityServices());
 
   getIt.registerLazySingleton(() => JobVisitDao(database));
 
@@ -43,6 +45,7 @@ Future<void> inject(AppDatabase database) async {
       watchJobVisits: getIt<WatchJobVisits>(),
       createJobVisit: getIt<CreateJobVisit>(),
       updateJobVisit: getIt<UpdateJobVisit>(),
+      connectivity: getIt<ConnectivityServices>(),
     ),
   );
 }

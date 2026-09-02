@@ -18,26 +18,6 @@ class JobVisitListPage extends StatefulWidget {
 class _JobVisitListPageState extends State<JobVisitListPage> {
   _VisitSort _sort = _VisitSort.newest;
 
-  List<entity.JobVisit> _sortVisits(List<entity.JobVisit> visits) {
-    final sortedVisits = [...visits];
-
-    switch (_sort) {
-      case _VisitSort.newest:
-        sortedVisits.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-        break;
-
-      case _VisitSort.oldest:
-        sortedVisits.sort((a, b) => a.timestamp.compareTo(b.timestamp));
-        break;
-
-      case _VisitSort.status:
-        sortedVisits.sort((a, b) => a.status.name.compareTo(b.status.name));
-        break;
-    }
-
-    return sortedVisits;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -115,6 +95,26 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
         );
       },
     );
+  }
+
+  List<entity.JobVisit> _sortVisits(List<entity.JobVisit> visits) {
+    final sortedVisits = [...visits];
+
+    switch (_sort) {
+      case _VisitSort.newest:
+        sortedVisits.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        break;
+
+      case _VisitSort.oldest:
+        sortedVisits.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        break;
+
+      case _VisitSort.status:
+        sortedVisits.sort((a, b) => a.status.name.compareTo(b.status.name));
+        break;
+    }
+
+    return sortedVisits;
   }
 
   Widget _buildLoaded(
