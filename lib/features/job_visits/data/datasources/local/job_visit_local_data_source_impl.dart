@@ -7,12 +7,12 @@ class JobVisitLocalDataSourceImpl implements JobVisitLocalDataSource {
   final JobVisitDao _dao;
   @override
   Future<void> create(JobVisitModel visit) async {
-    await _dao.insertVisit(visit.toCompanion());
+    return await _dao.insertVisit(visit.toCompanion());
   }
 
   @override
   Future<void> update(JobVisitModel visit, Set<String> changedFields) async {
-    await _dao.updateVisit(visit.toCompanion());
+    return await _dao.updateVisit(visit.toCompanion());
   }
 
   @override

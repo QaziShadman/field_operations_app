@@ -7,7 +7,7 @@ class CreateJobVisit {
 
   final JobVisitRepository _repository;
 
-  Future<entity.JobVisit> call(entity.JobVisit visit) {
-    return _repository.create(visit);
+  Future<entity.JobVisit> call(entity.JobVisit visit) async {
+    return await _repository.create(visit);
   }
 }
