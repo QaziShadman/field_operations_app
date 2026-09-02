@@ -2,6 +2,8 @@ import 'package:field_operations_app/features/job_visits/data/datasources/local/
 import 'package:field_operations_app/features/job_visits/data/models/job_visit_model.dart';
 import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
     as entity;
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit_sync_status.dart'
+    as jobvisitwithsyncstatusentity;
 import 'package:field_operations_app/features/job_visits/domain/repositories/job_visit_repository.dart';
 
 class JobVisitRepositoryImpl implements JobVisitRepository {
@@ -43,10 +45,17 @@ class JobVisitRepositoryImpl implements JobVisitRepository {
     return data?.toEntity();
   }
 
+  // @override
+  // Stream<List<entity.JobVisit>> watchAll() {
+  //   return _localDataSource.watchAll().map(
+  //     (items) => items.map((item) => item.toEntity()).toList(),
+  //   );
+  // }
+
   @override
-  Stream<List<entity.JobVisit>> watchAll() {
-    return _localDataSource.watchAll().map(
-      (items) => items.map((item) => item.toEntity()).toList(),
+  Stream<List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus>> watchAll() {
+    return _localDataSource.watchAllWithSyncStatus().map(
+      (models) => models.map((model) => model.toEntity()).toList(),
     );
   }
 

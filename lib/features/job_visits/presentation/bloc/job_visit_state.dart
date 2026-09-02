@@ -14,7 +14,8 @@ final class JobVisitLoading extends JobVisitState {
 
 final class JobVisitLoaded extends JobVisitState {
   const JobVisitLoaded({required this.visits});
-  final List<entity.JobVisit> visits;
+  // final List<entity.JobVisit> visits;
+  final List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus> visits;
 }
 
 final class JobVisitFailure extends JobVisitState {

@@ -23,7 +23,9 @@ class JobVisitUpdated extends JobVisitEvent {
 class JobVisitsLoaded extends JobVisitEvent {
   const JobVisitsLoaded(this.visits);
 
-  final List<entity.JobVisit> visits;
+  // final List<entity.JobVisit> visits;
+
+  final List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus> visits;
 }
 
 class JobVisitWatchFailed extends JobVisitEvent {
