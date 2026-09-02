@@ -7,7 +7,7 @@ class UpdateJobVisit {
 
   final JobVisitRepository _repository;
 
-  Future<entity.JobVisit> call(entity.JobVisit visit) {
-    return _repository.update(visit);
+  Future<entity.JobVisit> call(entity.JobVisit visit) async {
+    return await _repository.update(visit);
   }
 }
