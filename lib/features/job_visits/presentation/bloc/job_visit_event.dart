@@ -31,9 +31,3 @@ class JobVisitWatchFailed extends JobVisitEvent {
 
   final String message;
 }
-
-class JobVisitConnectivityChanged extends JobVisitEvent {
-  const JobVisitConnectivityChanged(this.isConnected);
-
-  final bool isConnected;
-}

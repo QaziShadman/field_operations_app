@@ -4,7 +4,7 @@ import 'package:field_operations_app/features/sync/domain/entities/sync_operatio
 import 'package:field_operations_app/features/sync/domain/repositories/sync_repository.dart';
 
 class SyncRepositoryImpl implements SyncRepository {
-  const SyncRepositoryImpl(this._localDataSource);
+  const SyncRepositoryImpl({required this._localDataSource});
 
   final SyncLocalDataSource _localDataSource;
 

@@ -872,15 +872,341 @@ class SyncOperationsCompanion extends UpdateCompanion<SyncOperation> {
   }
 }
 
+class $JobVisitFieldVersionsTable extends JobVisitFieldVersions
+    with TableInfo<$JobVisitFieldVersionsTable, JobVisitFieldVersion> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $JobVisitFieldVersionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _visitIdMeta = const VerificationMeta(
+    'visitId',
+  );
+  @override
+  late final GeneratedColumn<String> visitId = GeneratedColumn<String>(
+    'visit_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fieldNameMeta = const VerificationMeta(
+    'fieldName',
+  );
+  @override
+  late final GeneratedColumn<String> fieldName = GeneratedColumn<String>(
+    'field_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    visitId,
+    fieldName,
+    updatedAt,
+    deviceId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'job_visit_field_versions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<JobVisitFieldVersion> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('visit_id')) {
+      context.handle(
+        _visitIdMeta,
+        visitId.isAcceptableOrUnknown(data['visit_id']!, _visitIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_visitIdMeta);
+    }
+    if (data.containsKey('field_name')) {
+      context.handle(
+        _fieldNameMeta,
+        fieldName.isAcceptableOrUnknown(data['field_name']!, _fieldNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fieldNameMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {visitId, fieldName};
+  @override
+  JobVisitFieldVersion map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return JobVisitFieldVersion(
+      visitId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}visit_id'],
+      )!,
+      fieldName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}field_name'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+    );
+  }
+
+  @override
+  $JobVisitFieldVersionsTable createAlias(String alias) {
+    return $JobVisitFieldVersionsTable(attachedDatabase, alias);
+  }
+}
+
+class JobVisitFieldVersion extends DataClass
+    implements Insertable<JobVisitFieldVersion> {
+  final String visitId;
+  final String fieldName;
+  final DateTime updatedAt;
+  final String deviceId;
+  const JobVisitFieldVersion({
+    required this.visitId,
+    required this.fieldName,
+    required this.updatedAt,
+    required this.deviceId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['visit_id'] = Variable<String>(visitId);
+    map['field_name'] = Variable<String>(fieldName);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['device_id'] = Variable<String>(deviceId);
+    return map;
+  }
+
+  JobVisitFieldVersionsCompanion toCompanion(bool nullToAbsent) {
+    return JobVisitFieldVersionsCompanion(
+      visitId: Value(visitId),
+      fieldName: Value(fieldName),
+      updatedAt: Value(updatedAt),
+      deviceId: Value(deviceId),
+    );
+  }
+
+  factory JobVisitFieldVersion.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return JobVisitFieldVersion(
+      visitId: serializer.fromJson<String>(json['visitId']),
+      fieldName: serializer.fromJson<String>(json['fieldName']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'visitId': serializer.toJson<String>(visitId),
+      'fieldName': serializer.toJson<String>(fieldName),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deviceId': serializer.toJson<String>(deviceId),
+    };
+  }
+
+  JobVisitFieldVersion copyWith({
+    String? visitId,
+    String? fieldName,
+    DateTime? updatedAt,
+    String? deviceId,
+  }) => JobVisitFieldVersion(
+    visitId: visitId ?? this.visitId,
+    fieldName: fieldName ?? this.fieldName,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deviceId: deviceId ?? this.deviceId,
+  );
+  JobVisitFieldVersion copyWithCompanion(JobVisitFieldVersionsCompanion data) {
+    return JobVisitFieldVersion(
+      visitId: data.visitId.present ? data.visitId.value : this.visitId,
+      fieldName: data.fieldName.present ? data.fieldName.value : this.fieldName,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JobVisitFieldVersion(')
+          ..write('visitId: $visitId, ')
+          ..write('fieldName: $fieldName, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deviceId: $deviceId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(visitId, fieldName, updatedAt, deviceId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is JobVisitFieldVersion &&
+          other.visitId == this.visitId &&
+          other.fieldName == this.fieldName &&
+          other.updatedAt == this.updatedAt &&
+          other.deviceId == this.deviceId);
+}
+
+class JobVisitFieldVersionsCompanion
+    extends UpdateCompanion<JobVisitFieldVersion> {
+  final Value<String> visitId;
+  final Value<String> fieldName;
+  final Value<DateTime> updatedAt;
+  final Value<String> deviceId;
+  final Value<int> rowid;
+  const JobVisitFieldVersionsCompanion({
+    this.visitId = const Value.absent(),
+    this.fieldName = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  JobVisitFieldVersionsCompanion.insert({
+    required String visitId,
+    required String fieldName,
+    required DateTime updatedAt,
+    required String deviceId,
+    this.rowid = const Value.absent(),
+  }) : visitId = Value(visitId),
+       fieldName = Value(fieldName),
+       updatedAt = Value(updatedAt),
+       deviceId = Value(deviceId);
+  static Insertable<JobVisitFieldVersion> custom({
+    Expression<String>? visitId,
+    Expression<String>? fieldName,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? deviceId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (visitId != null) 'visit_id': visitId,
+      if (fieldName != null) 'field_name': fieldName,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deviceId != null) 'device_id': deviceId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  JobVisitFieldVersionsCompanion copyWith({
+    Value<String>? visitId,
+    Value<String>? fieldName,
+    Value<DateTime>? updatedAt,
+    Value<String>? deviceId,
+    Value<int>? rowid,
+  }) {
+    return JobVisitFieldVersionsCompanion(
+      visitId: visitId ?? this.visitId,
+      fieldName: fieldName ?? this.fieldName,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deviceId: deviceId ?? this.deviceId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (visitId.present) {
+      map['visit_id'] = Variable<String>(visitId.value);
+    }
+    if (fieldName.present) {
+      map['field_name'] = Variable<String>(fieldName.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JobVisitFieldVersionsCompanion(')
+          ..write('visitId: $visitId, ')
+          ..write('fieldName: $fieldName, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $JobVisitsTable jobVisits = $JobVisitsTable(this);
   late final $SyncOperationsTable syncOperations = $SyncOperationsTable(this);
+  late final $JobVisitFieldVersionsTable jobVisitFieldVersions =
+      $JobVisitFieldVersionsTable(this);
   late final JobVisitDao jobVisitDao = JobVisitDao(this as AppDatabase);
   late final SyncOperationDao syncOperationDao = SyncOperationDao(
     this as AppDatabase,
   );
+  late final JobVisitFieldVersionDao jobVisitFieldVersionDao =
+      JobVisitFieldVersionDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -888,6 +1214,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     jobVisits,
     syncOperations,
+    jobVisitFieldVersions,
   ];
 }
 
@@ -1340,6 +1667,206 @@ typedef $$SyncOperationsTableProcessedTableManager =
       SyncOperation,
       PrefetchHooks Function()
     >;
+typedef $$JobVisitFieldVersionsTableCreateCompanionBuilder =
+    JobVisitFieldVersionsCompanion Function({
+      required String visitId,
+      required String fieldName,
+      required DateTime updatedAt,
+      required String deviceId,
+      Value<int> rowid,
+    });
+typedef $$JobVisitFieldVersionsTableUpdateCompanionBuilder =
+    JobVisitFieldVersionsCompanion Function({
+      Value<String> visitId,
+      Value<String> fieldName,
+      Value<DateTime> updatedAt,
+      Value<String> deviceId,
+      Value<int> rowid,
+    });
+
+class $$JobVisitFieldVersionsTableFilterComposer
+    extends Composer<_$AppDatabase, $JobVisitFieldVersionsTable> {
+  $$JobVisitFieldVersionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get visitId => $composableBuilder(
+    column: $table.visitId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fieldName => $composableBuilder(
+    column: $table.fieldName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$JobVisitFieldVersionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $JobVisitFieldVersionsTable> {
+  $$JobVisitFieldVersionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get visitId => $composableBuilder(
+    column: $table.visitId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fieldName => $composableBuilder(
+    column: $table.fieldName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$JobVisitFieldVersionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $JobVisitFieldVersionsTable> {
+  $$JobVisitFieldVersionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get visitId =>
+      $composableBuilder(column: $table.visitId, builder: (column) => column);
+
+  GeneratedColumn<String> get fieldName =>
+      $composableBuilder(column: $table.fieldName, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+}
+
+class $$JobVisitFieldVersionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $JobVisitFieldVersionsTable,
+          JobVisitFieldVersion,
+          $$JobVisitFieldVersionsTableFilterComposer,
+          $$JobVisitFieldVersionsTableOrderingComposer,
+          $$JobVisitFieldVersionsTableAnnotationComposer,
+          $$JobVisitFieldVersionsTableCreateCompanionBuilder,
+          $$JobVisitFieldVersionsTableUpdateCompanionBuilder,
+          (
+            JobVisitFieldVersion,
+            BaseReferences<
+              _$AppDatabase,
+              $JobVisitFieldVersionsTable,
+              JobVisitFieldVersion
+            >,
+          ),
+          JobVisitFieldVersion,
+          PrefetchHooks Function()
+        > {
+  $$JobVisitFieldVersionsTableTableManager(
+    _$AppDatabase db,
+    $JobVisitFieldVersionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$JobVisitFieldVersionsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$JobVisitFieldVersionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$JobVisitFieldVersionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> visitId = const Value.absent(),
+                Value<String> fieldName = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => JobVisitFieldVersionsCompanion(
+                visitId: visitId,
+                fieldName: fieldName,
+                updatedAt: updatedAt,
+                deviceId: deviceId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String visitId,
+                required String fieldName,
+                required DateTime updatedAt,
+                required String deviceId,
+                Value<int> rowid = const Value.absent(),
+              }) => JobVisitFieldVersionsCompanion.insert(
+                visitId: visitId,
+                fieldName: fieldName,
+                updatedAt: updatedAt,
+                deviceId: deviceId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$JobVisitFieldVersionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $JobVisitFieldVersionsTable,
+      JobVisitFieldVersion,
+      $$JobVisitFieldVersionsTableFilterComposer,
+      $$JobVisitFieldVersionsTableOrderingComposer,
+      $$JobVisitFieldVersionsTableAnnotationComposer,
+      $$JobVisitFieldVersionsTableCreateCompanionBuilder,
+      $$JobVisitFieldVersionsTableUpdateCompanionBuilder,
+      (
+        JobVisitFieldVersion,
+        BaseReferences<
+          _$AppDatabase,
+          $JobVisitFieldVersionsTable,
+          JobVisitFieldVersion
+        >,
+      ),
+      JobVisitFieldVersion,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1348,4 +1875,6 @@ class $AppDatabaseManager {
       $$JobVisitsTableTableManager(_db, _db.jobVisits);
   $$SyncOperationsTableTableManager get syncOperations =>
       $$SyncOperationsTableTableManager(_db, _db.syncOperations);
+  $$JobVisitFieldVersionsTableTableManager get jobVisitFieldVersions =>
+      $$JobVisitFieldVersionsTableTableManager(_db, _db.jobVisitFieldVersions);
 }

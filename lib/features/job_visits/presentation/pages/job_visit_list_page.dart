@@ -1,4 +1,5 @@
 import 'package:field_operations_app/core/di/injector.dart';
+import 'package:field_operations_app/core/utils/services/debug/debug_database_service.dart';
 import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
     as entity;
 import 'package:field_operations_app/features/job_visits/presentation/bloc/job_visit_bloc.dart';
@@ -86,15 +87,35 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
             JobVisitFailure(:final message) => _buildError(context, message),
           },
           floatingActionButton: showFab
-              ? FloatingActionButton.extended(
-                  onPressed: _createVisit,
-                  icon: const Icon(Icons.add),
-                  label: const Text('New Visit'),
+              ? Column(
+                  mainAxisSize: .min,
+                  crossAxisAlignment: .end,
+                  spacing: 16,
+                  children: [
+                    FloatingActionButton.extended(
+                      heroTag: "1",
+                      onPressed: _createVisit,
+                      icon: const Icon(Icons.add),
+                      label: const Text('New Visit'),
+                    ),
+                    FloatingActionButton.extended(
+                      heroTag: "2",
+                      onPressed: _reset,
+                      icon: const Icon(Icons.delete),
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      label: const Text('Reset DB(Debug)'),
+                    ),
+                  ],
                 )
               : null,
         );
       },
     );
+  }
+
+  Future<void> _reset() async {
+    await getIt<DebugDatabaseService>().resetSyncData();
   }
 
   List<entity.JobVisit> _sortVisits(List<entity.JobVisit> visits) {

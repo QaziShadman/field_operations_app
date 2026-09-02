@@ -36,4 +36,8 @@ class JobVisitDao extends DatabaseAccessor<AppDatabase>
 
     throw ArgumentError('Job visit ID is required for update.');
   }
+
+  Future<void> updateOrInsert(JobVisitsCompanion visit) {
+    return into(jobVisits).insertOnConflictUpdate(visit);
+  }
 }

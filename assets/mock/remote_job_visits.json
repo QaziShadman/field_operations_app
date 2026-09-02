@@ -1,0 +1,94 @@
+{
+  "jobVisits": [
+    {
+      "id": "visit-001",
+      "timestamp": "2026-09-02T09:00:00.000Z",
+      "latitude": 23.8103,
+      "longitude": 90.4125,
+      "status": "enRoute",
+      "photoPath": null,
+      "fieldVersions": {
+        "timestamp": {
+          "updatedAt": "2026-09-02T08:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "latitude": {
+          "updatedAt": "2026-09-02T08:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "longitude": {
+          "updatedAt": "2026-09-02T08:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "status": {
+          "updatedAt": "2026-09-02T08:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "photoPath": {
+          "updatedAt": "2026-09-02T08:00:00.000Z",
+          "deviceId": "device-server"
+        }
+      }
+    },
+    {
+      "id": "visit-002",
+      "timestamp": "2026-09-01T14:00:00.000Z",
+      "latitude": 23.8150,
+      "longitude": 90.4200,
+      "status": "completed",
+      "photoPath": null,
+      "fieldVersions": {
+        "timestamp": {
+          "updatedAt": "2026-09-01T13:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "latitude": {
+          "updatedAt": "2026-09-01T13:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "longitude": {
+          "updatedAt": "2026-09-01T13:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "status": {
+          "updatedAt": "2026-09-01T16:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "photoPath": {
+          "updatedAt": "2026-09-01T16:00:00.000Z",
+          "deviceId": "device-server"
+        }
+      }
+    },
+    {
+      "id": "visit-003",
+      "timestamp": "2026-09-02T11:00:00.000Z",
+      "latitude": 23.8200,
+      "longitude": 90.4250,
+      "status": "onSite",
+      "photoPath": null,
+      "fieldVersions": {
+        "timestamp": {
+          "updatedAt": "2026-09-02T10:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "latitude": {
+          "updatedAt": "2026-09-02T10:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "longitude": {
+          "updatedAt": "2026-09-02T10:00:00.000Z",
+          "deviceId": "device-server"
+        },
+        "status": {
+          "updatedAt": "2026-09-02T11:30:00.000Z",
+          "deviceId": "device-server"
+        },
+        "photoPath": {
+          "updatedAt": "2026-09-02T11:30:00.000Z",
+          "deviceId": "device-server"
+        }
+      }
+    }
+  ]
+}
