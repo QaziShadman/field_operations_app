@@ -39,7 +39,10 @@ Future<void> inject(AppDatabase database) async {
 
   // Job Visit
   getIt.registerLazySingleton(
-    () => JobVisitLocalDataSourceImpl(dao: getIt<JobVisitDao>()),
+    () => JobVisitLocalDataSourceImpl(
+      database: database,
+      dao: getIt<JobVisitDao>(),
+    ),
   );
 
   getIt.registerLazySingleton(

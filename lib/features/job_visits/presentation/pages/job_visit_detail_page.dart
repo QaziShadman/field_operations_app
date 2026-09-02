@@ -45,9 +45,14 @@ class _JobVisitDetailPageState extends State<JobVisitDetailPage> {
     if (state is! JobVisitLoaded) {
       return null;
     }
+    // for (final visit in state.visits) {
+    //   if (visit.id == widget.visitId) {
+    //     return visit;
+    //   }
+    // }
     for (final visit in state.visits) {
-      if (visit.id == widget.visitId) {
-        return visit;
+      if (visit.visit.id == widget.visitId) {
+        return visit.visit;
       }
     }
     return null;

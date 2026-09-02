@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
     as entity;
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit_sync_status.dart'
+    as jobvisitwithsyncstatusentity;
 import 'package:field_operations_app/features/job_visits/domain/usecases/create_job_visit.dart';
 import 'package:field_operations_app/features/job_visits/domain/usecases/update_job_visit.dart';
 import 'package:field_operations_app/features/job_visits/domain/usecases/watch_job_visits.dart';
@@ -26,7 +28,9 @@ class JobVisitBloc extends Bloc<JobVisitEvent, JobVisitState> {
   final CreateJobVisit _createJobVisit;
   final UpdateJobVisit _updateJobVisit;
 
-  StreamSubscription<List<entity.JobVisit>>? _watchSubscription;
+  // StreamSubscription<List<entity.JobVisit>>? _watchSubscription;
+  StreamSubscription<List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus>>?
+  _watchSubscription;
 
   Future<void> _onStarted(
     JobVisitStarted event,

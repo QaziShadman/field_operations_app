@@ -2,6 +2,8 @@ import 'package:field_operations_app/core/di/injector.dart';
 import 'package:field_operations_app/core/utils/services/debug/debug_database_service.dart';
 import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
     as entity;
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit_sync_status.dart'
+    as jobvisitwithsyncstatusentity;
 import 'package:field_operations_app/features/job_visits/presentation/bloc/job_visit_bloc.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_detail_page.dart';
 import 'package:field_operations_app/features/job_visits/presentation/pages/job_visit_form_page.dart';
@@ -118,20 +120,48 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
     await getIt<DebugDatabaseService>().resetSyncData();
   }
 
-  List<entity.JobVisit> _sortVisits(List<entity.JobVisit> visits) {
+  // List<entity.JobVisit> _sortVisits(List<entity.JobVisit> visits) {
+  //   final sortedVisits = [...visits];
+
+  //   switch (_sort) {
+  //     case _VisitSort.newest:
+  //       sortedVisits.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+  //       break;
+
+  //     case _VisitSort.oldest:
+  //       sortedVisits.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  //       break;
+
+  //     case _VisitSort.status:
+  //       sortedVisits.sort((a, b) => a.status.name.compareTo(b.status.name));
+  //       break;
+  //   }
+
+  //   return sortedVisits;
+  // }
+
+  List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus> _sortVisits(
+    List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus> visits,
+  ) {
     final sortedVisits = [...visits];
 
     switch (_sort) {
       case _VisitSort.newest:
-        sortedVisits.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        sortedVisits.sort(
+          (a, b) => b.visit.timestamp.compareTo(a.visit.timestamp),
+        );
         break;
 
       case _VisitSort.oldest:
-        sortedVisits.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        sortedVisits.sort(
+          (a, b) => a.visit.timestamp.compareTo(b.visit.timestamp),
+        );
         break;
 
       case _VisitSort.status:
-        sortedVisits.sort((a, b) => a.status.name.compareTo(b.status.name));
+        sortedVisits.sort(
+          (a, b) => a.visit.status.name.compareTo(b.visit.status.name),
+        );
         break;
     }
 
@@ -141,8 +171,10 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
   Widget _buildLoaded(
     BuildContext context,
     ThemeData theme,
-    List<entity.JobVisit> visits,
+    // List<entity.JobVisit> visits,
+    List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus> visits,
   ) {
+    // final sortedVisits = _sortVisits(visits);
     final sortedVisits = _sortVisits(visits);
 
     if (sortedVisits.isEmpty) {
@@ -180,11 +212,11 @@ class _JobVisitListPageState extends State<JobVisitListPage> {
             itemBuilder: (context, index) {
               final visit = sortedVisits[index];
               return JobVisitListTile(
-                timestamp: visit.timestamp,
-                status: visit.status,
-                latitude: visit.latitude,
-                longitude: visit.longitude,
-                onTap: () => _openVisit(visit),
+                // visit: visit,
+                visit: visit.visit,
+                syncStatus: visit.syncStatus,
+                // onTap: () => _openVisit(visit),
+                onTap: () => _openVisit(visit.visit),
               );
             },
             separatorBuilder: (_, _) => const SizedBox(height: 12),

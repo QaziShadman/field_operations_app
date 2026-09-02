@@ -1,19 +1,19 @@
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
+    as entity;
 import 'package:field_operations_app/features/job_visits/domain/enums/job_visit_status.dart';
+import 'package:field_operations_app/features/job_visits/domain/enums/sync_status.dart';
+import 'package:field_operations_app/features/job_visits/presentation/widgets/sync_status_indicator.dart';
 import 'package:material_ui/material_ui.dart';
 
 class JobVisitListTile extends StatelessWidget {
   const JobVisitListTile({
-    required this.timestamp,
-    required this.status,
-    required this.latitude,
-    required this.longitude,
+    required this.visit,
+    required this.syncStatus,
     this.onTap,
     super.key,
   });
-  final DateTime timestamp;
-  final JobVisitStatus status;
-  final double latitude;
-  final double longitude;
+  final entity.JobVisit visit;
+  final SyncStatus syncStatus;
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
@@ -31,13 +31,13 @@ class JobVisitListTile extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      _formatDateTime(timestamp),
+                      _formatDateTime(visit.timestamp),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  _StatusBadge(status: status),
+                  _StatusBadge(status: visit.status),
                 ],
               ),
               const SizedBox(height: 14),
@@ -51,30 +51,15 @@ class JobVisitListTile extends StatelessWidget {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      '${latitude.toStringAsFixed(4)}, '
-                      '${longitude.toStringAsFixed(4)}',
+                      '${visit.latitude.toStringAsFixed(4)}, '
+                      '${visit.longitude.toStringAsFixed(4)}',
                       style: theme.textTheme.bodyMedium,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Icon(
-                    Icons.cloud_done_outlined,
-                    size: 17,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Synced',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
+              SyncStatusIndicator(status: syncStatus),
             ],
           ),
         ),

@@ -1,5 +1,7 @@
 import 'package:field_operations_app/features/job_visits/domain/entities/job_visit.dart'
     as entity;
+import 'package:field_operations_app/features/job_visits/domain/entities/job_visit_sync_status.dart'
+    as jobvisitwithsyncstatusentity;
 import 'package:field_operations_app/features/job_visits/domain/repositories/job_visit_repository.dart';
 
 class WatchJobVisits {
@@ -7,7 +9,11 @@ class WatchJobVisits {
 
   final JobVisitRepository _repository;
 
-  Stream<List<entity.JobVisit>> call() {
+  // Stream<List<entity.JobVisit>> call() {
+  //   return _repository.watchAll();
+  // }
+
+  Stream<List<jobvisitwithsyncstatusentity.JobVisitWithSyncStatus>> call() {
     return _repository.watchAll();
   }
 }
