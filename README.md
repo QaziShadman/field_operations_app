@@ -2,17 +2,6 @@
 
 An offline-first field operations application for a fictitious logistics company.
 
-## Functions
-- A list screen shows all Job Visits, sortable by status and by needs sync state, with a visible indicator per item showing
-sync state: pending, synced, or conflict resolved.
-- Job Visits must be created and edited while fully offline, and must sync to a mock backend (a local JSON file or an in
-memory fake service you write; no real backend required) the next time connectivity is restored, simulated via a toggle
-in a debug menu.
-- A field technician can log a Job Visit: timestamp, GPS coordinate, a status (En Route, On Site, Completed, Blocked),
-and an optional photo attachment.
-- The app must remain usable, with no crashes and no frozen UI, if the mock sync fails midway through a batch. Partial
-sync must be resumable, not restarted from zero.
-
 ## Architecture
 
 

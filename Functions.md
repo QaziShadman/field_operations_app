@@ -1,0 +1,15 @@
+# Summary
+
+This readme file lists all the requirements requested versus the requirements delivered.
+
+## Functions
+- [X] A list screen shows all Job Visits, sortable by status and by needs sync state, with a visible indicator per item showing sync state: pending, synced, or conflict resolved.
+- [X] Job Visits must be created and edited while fully offline, and must sync to a mock backend (a local JSON file or an in memory fake service you write; no real backend required) the next time connectivity is restored, simulated via a toggle in a debug menu.
+- [X] A field technician can log a Job Visit: timestamp, GPS coordinate, a status (En Route, On Site, Completed, Blocked), and an optional photo attachment.
+- [X] The app must remain usable, with no crashes and no frozen UI, if the mock sync fails midway through a batch. Partial sync must be resumable, not restarted from zero.
+- [X] Gate access to a Job Visit's photo attachment behind a biometric or device credential check, implemented through local_auth or a custom platform channel calling BiometricPrompt on Android and LAContext on iOS directly. Handle the case where biometrics are unavailable or unenrolled and fall back gracefully to a device passcode.
+- [X] System driven theming: full light and dark mode support that follows the device's system theme setting automatically and updates live if the user changes the system setting while the app is open, with no restart required.
+- [ ] Implement background location logging that continues capturing GPS coordinates for an active Job Visit when the app is backgrounded or the device is locked. On Android this requires a Foreground Service with a persistent notification and correct handling of the background location permission changes introduced across Android 10 through 14.On iOS this requires configuring an appropriate Background Mode and handling the When In Use versus Always authorization states, including the case where the user downgrades permission mid session.
+- [ ] Persist an authentication token for the mock sync service using the Android Keystore and iOS Keychain, not plain SharedPreferences or plain files. You may use flutter_secure_storage, but you must explain in your README what it does under the hood on each platform.
+- [ ] Push style notifications: when a Job Visit's status changes from the mock backend during a sync (trigger this from your debug menu), show a local notification. Tapping the notification must deep link directly into that Job Visit's detail screen, including when the app was fully closed.
+- [ ] Deep linking and app links: the app must support opening directly to a specific Job Visit's detail screen from an external link (a custom URL scheme or Android App Links or iOS Universal Links), both when the app is already running and when it is launched cold from the link.
